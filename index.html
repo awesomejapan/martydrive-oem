@@ -5,6 +5,71 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ログイン | MARTY DRIVE Wholesale</title>
 <link rel="stylesheet" href="css/style.css">
+
+<style>
+/* === LOGO & HERO-BG PATCH === */
+.n-brand img { display:block; height:28px; width:auto; }
+.n-brand { display:flex; align-items:center; padding:0; }
+
+/* Hero background character */
+.hero { position:relative; overflow:hidden; }
+.hero-bg-imgs {
+  position:absolute; inset:0;
+  display:flex; align-items:center; justify-content:flex-end;
+  pointer-events:none; z-index:0;
+  padding-right:4%;
+}
+.hero-char {
+  height:85%; max-height:340px; width:auto;
+  opacity:0.18;
+  filter:drop-shadow(0 0 40px rgba(79,195,247,0.3));
+}
+.hero-bg { display:none; } /* hide emoji bg */
+.hero-ov, .hero-c { position:relative; z-index:1; }
+
+/* === MOBILE FIXES === */
+@media (max-width: 768px) {
+  nav {
+    display:flex; flex-wrap:wrap; gap:4px;
+    padding:8px 12px;
+  }
+  .n-brand { order:0; flex:1; min-width:120px; }
+  .n-out { order:1; margin-left:auto; }
+  .n-tab { order:2; font-size:11px; padding:5px 8px; }
+
+  .hero { min-height:240px; }
+  .hero-c { padding:2rem 1rem 2rem; }
+  .hero-t { font-size:clamp(22px,6vw,36px); }
+  .hero-char { height:60%; max-height:200px; opacity:0.12; }
+
+  .ctrl-top { flex-direction:column; align-items:flex-start; gap:8px; }
+  .s-wrap { width:100%; }
+  .s-inp { width:100%; box-sizing:border-box; }
+
+  .gwrap { padding:0 8px; }
+  .grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap:10px; }
+  .pcard-img { height:120px; }
+
+  .acards { grid-template-columns:1fr 1fr; gap:10px; padding:1rem; }
+
+  .steps { padding:0 1rem; }
+  .step { flex-direction:row; gap:12px; }
+
+  .contact { padding:1.5rem 1rem; }
+  .c-email { font-size:14px; word-break:break-all; }
+
+  footer { font-size:10px; padding:10px; text-align:center; }
+}
+
+@media (max-width: 480px) {
+  .grid { grid-template-columns:1fr 1fr; }
+  .acards { grid-template-columns:1fr; }
+  .hero-t { font-size:20px; }
+  .pills { gap:4px; }
+  .pill { font-size:11px; padding:5px 10px; }
+}
+</style>
+
 </head>
 <body>
 
