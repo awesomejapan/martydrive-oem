@@ -56,6 +56,13 @@ td{padding:10px;font-size:13px;vertical-align:middle;}
 .drawer-head h3{font-size:16px;font-weight:700;}
 .drawer-close{background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;}
 .drawer-close:hover{color:var(--text);}
+/* SORT BUTTONS */
+.sort-btns { display:flex; flex-direction:column; gap:3px; }
+.btn-sort { background:rgba(255,255,255,0.07); border:0.5px solid var(--border2); border-radius:4px; width:26px; height:22px; font-size:11px; cursor:pointer; color:var(--muted); display:flex; align-items:center; justify-content:center; }
+.btn-sort:hover { background:rgba(79,195,247,0.15); color:var(--accent); }
+.btn-sort:disabled { opacity:0.25; cursor:default; }
+.sort-idx { font-size:11px; color:var(--muted); text-align:center; min-width:20px; }
+
 .drawer-body{padding:1.5rem;}
 .form-row{margin-bottom:1rem;}
 .form-row-2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:1rem;}
@@ -229,6 +236,7 @@ td{padding:10px;font-size:13px;vertical-align:middle;}
   <table>
     <thead>
       <tr>
+        <th style="width:70px;">順番</th>
         <th>画像</th>
         <th>商品名 / 説明</th>
         <th>カテゴリ</th>
@@ -410,6 +418,28 @@ function doAdminLogin() {
   }
 }
 
+
+/* ---- 並び替え ---- */
+function moveProduct(id, dir) {
+  /* localStorageから最新データを取得してsplice */
+  try {
+    const saved = localStorage.getItem("md_products");
+    if (saved) {
+      const arr = JSON.parse(saved);
+      const idx = arr.findIndex(p => p.id === id);
+      if (idx < 0) return;
+      const newIdx = idx + dir;
+      if (newIdx < 0 || newIdx >= arr.length) return;
+      const tmp = arr[idx]; arr[idx] = arr[newIdx]; arr[newIdx] = tmp;
+      localStorage.setItem("md_products", JSON.stringify(arr));
+      /* productsグローバル配列も同期 */
+      products.splice(0, products.length, ...arr);
+      renderTable();
+      showToast(dir < 0 ? "上に移動しました" : "下に移動しました");
+    }
+  } catch(e) { console.error(e); }
+}
+
 function doAdminLogout() {
   sessionStorage.removeItem("mc_admin");
   document.getElementById("admin-login").style.display = "flex";
@@ -419,5 +449,69 @@ function doAdminLogout() {
 }
 </script>
 <script src="js/admin.js"></script>
+
+<script>
+/* ===== renderTable オーバーライド: 並び替えボタン列を追加 ===== */
+(function() {
+  /* admin.js が読み込まれた後に上書きする */
+  window.addEventListener('DOMContentLoaded', function() {
+    /* 元の renderTable を保持（admin.js が定義するはず） */
+    var _origRender = window.renderTable;
+    if (!_origRender) return; /* 念のため */
+
+    window.renderTable = function() {
+      /* 元の処理を実行してtbodyを描画 */
+      _origRender();
+
+      /* tbody の各行先頭に並び替えセルを挿入 */
+      var tbody = document.getElementById('tbody');
+      if (!tbody) return;
+
+      /* 現在のフィルタ済みIDリストを取得（元のrenderTableと同じフィルタ） */
+      var q = (document.getElementById('sq') ? document.getElementById('sq').value : '').toLowerCase();
+      var cat = document.getElementById('cat-filter') ? document.getElementById('cat-filter').value : 'all';
+
+      /* localStorageの最新順で全productを取得 */
+      var allProds = products; /* グローバル */
+      var filteredIds = allProds
+        .filter(function(p) {
+          var cok = cat === 'all' || p.cat === cat;
+          var qok = !q || (p.name||'').toLowerCase().includes(q) || (p.desc||'').toLowerCase().includes(q);
+          return cok && qok;
+        })
+        .map(function(p) { return p.id; });
+
+      var rows = tbody.querySelectorAll('tr');
+      rows.forEach(function(tr, rowIdx) {
+        /* 既存の並び替えセルがあれば削除 */
+        var existing = tr.querySelector('.sort-cell');
+        if (existing) existing.remove();
+
+        var id = filteredIds[rowIdx];
+        if (id === undefined) return;
+
+        /* 全体の配列内位置 */
+        var globalIdx = allProds.findIndex(function(p) { return p.id === id; });
+        var isFirst = globalIdx === 0;
+        var isLast  = globalIdx === allProds.length - 1;
+
+        var td = document.createElement('td');
+        td.className = 'sort-cell';
+        td.style.textAlign = 'center';
+        td.innerHTML =
+          '<div class="sort-btns">' +
+            '<button class="btn-sort" onclick="moveProduct(' + id + ',-1)" ' + (isFirst ? 'disabled' : '') + ' title="上へ">▲</button>' +
+            '<button class="btn-sort" onclick="moveProduct(' + id + ',1)" ' + (isLast ? 'disabled' : '') + ' title="下へ">▼</button>' +
+          '</div>';
+        tr.insertBefore(td, tr.firstChild);
+      });
+    };
+
+    /* 初回描画 */
+    window.renderTable();
+  });
+})();
+</script>
+
 </body>
 </html>

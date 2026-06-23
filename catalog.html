@@ -27,6 +27,15 @@
 .hero-bg { display:none; } /* hide emoji bg */
 .hero-ov, .hero-c { position:relative; z-index:1; }
 
+
+/* === PC 5列グリッド === */
+@media (min-width: 769px) {
+  .grid {
+    grid-template-columns: repeat(5, 1fr) !important;
+    gap: 14px;
+  }
+}
+
 /* === MOBILE FIXES === */
 @media (max-width: 768px) {
   nav {
