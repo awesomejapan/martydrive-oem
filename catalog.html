@@ -36,6 +36,63 @@
   }
 }
 
+
+/* === MODAL MOBILE FIX === */
+/* デスクトップ: 横並び（画像左・情報右）はstyle.cssに任せる */
+@media (max-width: 768px) {
+  /* モーダル本体をほぼ全画面に */
+  .mback {
+    align-items: flex-end !important;
+    padding: 0 !important;
+  }
+  .modal {
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: 92vh !important;
+    border-radius: 16px 16px 0 0 !important;
+    overflow-y: auto !important;
+    position: relative;
+  }
+  /* 閉じるボタン: 右上固定 */
+  .mclose-btn {
+    position: sticky !important;
+    top: 8px;
+    float: right;
+    margin: 8px 8px 0 0;
+    z-index: 10;
+  }
+  /* 内側: 縦並び（画像上・情報下） */
+  .modal-inner {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0 !important;
+    padding: 0 !important;
+  }
+  /* 画像エリア */
+  .m-imgs {
+    width: 100% !important;
+    min-width: unset !important;
+    max-width: 100% !important;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px 12px 8px;
+    box-sizing: border-box;
+  }
+  .m-imgs img,
+  .m-imgs .m-img-cell {
+    width: 100% !important;
+    max-height: 220px !important;
+    object-fit: contain;
+  }
+  /* 情報エリア */
+  .m-info {
+    width: 100% !important;
+    padding: 0 16px 24px !important;
+    box-sizing: border-box;
+  }
+}
+
 /* === MOBILE FIXES === */
 @media (max-width: 768px) {
   nav {
